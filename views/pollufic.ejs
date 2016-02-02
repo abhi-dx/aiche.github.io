@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+		<title>Pollufic Data</title>
+		<meta name="author" content="Pollufic" />
+		<link rel="shortcut icon" href="../favicon.ico"> 
+		<link rel="stylesheet" type="text/css" href="./css/calendar.css" />
+		<link rel="stylesheet" type="text/css" href="./css/custom_2.css" />
+		<link rel="stylesheet" href="./css/bootstrap.min.css" type="text/css">
+		<link rel="stylesheet" href="./css/bootstrap.css" type="text/css">
+		<script src="./js/modernizr.custom.63321.js"></script>
+	</head>
+	<body>
+	<nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">Pollufic.</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="page-scroll" href="#about">About</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#services">AQI</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#portfolio">Services</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+		<div class="container">	
+			<hr></hr>
+			<hr></hr>
+			
+			
+				<div class="row">
+					<div class="col-md-8">
+					<header class="clearfix text-center">
+					<h1>Pick date to check its AQI</h1>
+					</header>
+					<div class="custom-calendar-wrap">
+						<div id="custom-inner" class="custom-inner">
+							<div class="custom-header clearfix">
+								<nav>
+									<span id="custom-prev" class="custom-prev"></span>
+									<span id="custom-next" class="custom-next"></span>
+								</nav>
+								<h2 id="custom-month" class="custom-month"></h2>
+								<h3 id="custom-year" class="custom-year"></h3>
+							</div>
+							<div id="calendar" class="fc-calendar-container"></div>
+					
+						</div>
+					</div>
+					
+					</div>
+					<div class="col-md-4">
+						<p id="display"></p>
+					</div>
+				</div>
+				
+			
+			
+			
+		</div>
+
+		<!-- calendar scripts -->
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<script type="text/javascript" src="./js/jquery.calendario.js"></script>
+		<script src="./js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="./js/data.js"></script>
+		<script type="text/javascript">	
+			$(function() {
+			
+				var transEndEventNames = {
+						'WebkitTransition' : 'webkitTransitionEnd',
+						'MozTransition' : 'transitionend',
+						'OTransition' : 'oTransitionEnd',
+						'msTransition' : 'MSTransitionEnd',
+						'transition' : 'transitionend'
+					},
+					transEndEventName = transEndEventNames[ Modernizr.prefixed( 'transition' ) ],
+					$wrapper = $( '#custom-inner' ),
+					$calendar = $( '#calendar' ),
+					cal = $calendar.calendario( {
+						onDayClick : function( $el, $contentEl, dateProperties ) {
+
+							if( $contentEl.length > 0 ) {
+								showEvents( $contentEl, dateProperties );
+							}
+
+						},
+						caldata : codropsEvents,
+						displayWeekAbbr : true
+					} ),
+					$month = $( '#custom-month' ).html( cal.getMonthName() ),
+					$year = $( '#custom-year' ).html( cal.getYear() );
+					$('#display').html(cal.getCell("MON"));
+
+				$( '#custom-next' ).on( 'click', function() {
+					cal.gotoNextMonth( updateMonthYear );
+				} );
+				$( '#custom-prev' ).on( 'click', function() {
+					cal.gotoPreviousMonth( updateMonthYear );
+				} );
+
+				function updateMonthYear() {				
+					$month.html( cal.getMonthName() );
+					$year.html( cal.getYear() );
+				}
+
+				// just an example..
+				function showEvents( $contentEl, dateProperties ) {
+
+					hideEvents();
+					
+					var $events = $( '<div id="custom-content-reveal" class="custom-content-reveal"><h4>Events for ' + dateProperties.monthname + ' ' + dateProperties.day + ', ' + dateProperties.year + '</h4></div>' ),
+						$close = $( '<span class="custom-content-close"></span>' ).on( 'click', hideEvents );
+
+					$events.append( $contentEl.html() , $close ).insertAfter( $wrapper );
+					
+					setTimeout( function() {
+						$events.css( 'top', '0%' );
+					}, 25 );
+
+				}
+				function hideEvents() {
+
+					var $events = $( '#custom-content-reveal' );
+					if( $events.length > 0 ) {
+						
+						$events.css( 'top', '100%' );
+						Modernizr.csstransitions ? $events.on( transEndEventName, function() { $( this ).remove(); } ) : $events.remove();
+
+					}
+
+				}
+			
+			});
+			
+			function getData(day, month, year, week){
+				month++;
+				var data = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
+				console.log('Date: '+(day)+' Month: '+month+' Year: '+year+' Day: '+data[week]);
+				document.getElementById("display").innerHTML = 'Date: '+(--day)+' Month: '+month+' Year: '+year+' Day: '+data[week];
+				
+			}
+		</script>
+	</body>
+</html>
